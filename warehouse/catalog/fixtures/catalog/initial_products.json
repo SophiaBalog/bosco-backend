@@ -1,0 +1,35 @@
+[
+  {
+    "model": "catalog.product",
+    "pk": 1,
+    "fields": {
+      "title": "Кобзар",
+      "author": "Тарас Шевченко",
+      "year": 1840,
+      "genre": "Поезія",
+      "price": "350.00"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 2,
+    "fields": {
+      "title": "1984",
+      "author": "Джордж Орвелл",
+      "year": 1949,
+      "genre": "Антиутопія",
+      "price": "280.00"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 3,
+    "fields": {
+      "title": "Дюна",
+      "author": "Френк Герберт",
+      "year": 1965,
+      "genre": "Фантастика",
+      "price": "450.00"
+    }
+  }
+]
