@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load catalog_extras %}
+
+{% block title %}Список товарів{% endblock %}
+
+{% block content %}
+<h2>Список товарів на складі</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Назва</th>
+            <th>Автор</th>
+            <th>Рік</th>
+            <th>Жанр</th>
+            <th>Ціна</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in products %}
+        <tr>
+            <td>{{ p.title }}</td>
+            <td>{{ p.author }}</td>
+            <td>{{ p.year }}</td>
+            <td>{{ p.genre }}</td>
+            <td>{{ p.price|uah }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">Товарів немає</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
