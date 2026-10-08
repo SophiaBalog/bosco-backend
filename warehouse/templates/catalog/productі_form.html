@@ -5,7 +5,7 @@
 {% block content %}
 <h2>Додавання товару</h2>
 
-<form method="post" action="/catalog/add/">
+<form method="post">
     {% csrf_token %}
     <p><label>Назва: <input type="text" name="title" required></label></p>
     <p><label>Автор: <input type="text" name="author" required></label></p>

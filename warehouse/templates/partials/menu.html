@@ -1,6 +1,6 @@
 {% load catalog_extras %}
 <nav class="main-nav">
-    <a href="/catalog/products/">Список товарів</a> |
-    <a href="/catalog/add/">Додати товар</a> |
+    <a href="{% url 'product_list' %}">Список товарів</a> |
+    <a href="{% url 'add_product' %}">Додати товар</a> |
     <span>Всього товарів у базі: <strong>{% product_count %}</strong></span>
 </nav>

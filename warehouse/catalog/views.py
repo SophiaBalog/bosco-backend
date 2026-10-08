@@ -18,6 +18,6 @@ def add_product(request):
             title=title, author=author, year=year, genre=genre, price=price
         )
         messages.success(request, f'Товар "{title}" успішно додано!')
-        return redirect('/catalog/products/')
+        return redirect('product_list')
 
-    return render(request, 'catalog/product_form.html')
+    return render(request, 'catalog/products_form.html')
