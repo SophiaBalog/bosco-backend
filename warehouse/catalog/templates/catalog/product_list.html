@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Список товарів</h2>
+    <a href="{% url 'add_product' %}" class="btn btn-primary mb-3">Додати товар</a>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Назва</th>
+                <th>Артикул</th>
+                <th>Ціна</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.title }}</td>
+                <td>{{ product.article }}</td>
+                <td>{{ product.price }} грн</td>
+                <td>
+                    <a href="{% url 'product_edit' product.pk %}" class="btn btn-sm btn-warning">Редагувати</a>
+                    <a href="{% url 'product_delete' product.pk %}" class="btn btn-sm btn-danger">Видалити</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

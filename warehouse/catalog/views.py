@@ -3,6 +3,9 @@ from django.contrib import messages
 from .models import Product
 from .forms import ProductForm
 
+
+
+
 def product_list(request):
     products = Product.objects.all()
     return render(request, 'catalog/products.html', {'products': products})
@@ -53,3 +56,41 @@ def product_edit_view(request, pk):
 def product_list_view(request):
     products = Product.objects.all()
     return render(request, 'catalog/product_list.html', {'products': products})
+
+
+def product_list_view(request):
+    products = Product.objects.all()
+    return render(request, 'catalog/product_list.html', {'products': products})
+
+
+def product_add_view(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            product = form.save()
+            messages.success(request, 'Товар успішно створено!')
+            return redirect('product_list')
+    else:
+        form = ProductForm()
+    return render(request, 'catalog/product_form.html', {'form': form})
+
+def product_edit_view(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if request.method == 'POST':
+        form = ProductForm(request.POST, instance=product)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Товар успішно оновлено!')
+            return redirect('product_list')
+    else:
+        form = ProductForm(instance=product)
+    return render(request, 'catalog/product_form.html', {'form': form})
+
+
+def product_delete_view(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if request.method == 'POST':
+        product.delete()
+        messages.success(request, 'Товар успішно видалено!')
+        return redirect('product_list')
+    return render(request, 'catalog/product_confirm_delete.html', {'product': product})
