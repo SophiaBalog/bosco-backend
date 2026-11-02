@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Звіт{% endblock %}
+
+{% block content %}
+<h2>Звіт по товарах</h2>
+<p>Усього товарів: <strong>{{ total }}</strong></p>
+<p>Опубліковано: <strong>{{ published }}</strong></p>
+<p>Записів інвентарю з низьким запасом: <strong>{{ low_stock }}</strong></p>
+
+<h3>За категоріями</h3>
+<table>
+    <tr><th>Категорія</th><th>Кількість</th></tr>
+    {% for row in by_category %}
+    <tr><td>{{ row.category__name }}</td><td>{{ row.n }}</td></tr>
+    {% endfor %}
+</table>
+
+<h3>За власниками</h3>
+<table>
+    <tr><th>Власник</th><th>Кількість</th></tr>
+    {% for row in by_owner %}
+    <tr><td>{{ row.owner__username|default:"без власника" }}</td><td>{{ row.n }}</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

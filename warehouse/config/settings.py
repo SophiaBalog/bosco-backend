@@ -48,6 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'catalog.middleware.RequestTimingMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -131,3 +132,8 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'manage_list'
+LOGOUT_REDIRECT_URL = 'login'

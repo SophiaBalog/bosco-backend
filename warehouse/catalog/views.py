@@ -10,7 +10,12 @@ from django.views.decorators.http import require_POST
 from .models import Product, Warehouse, InventoryRecord
 from .forms import ProductForm
 
-
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.exceptions import PermissionDenied
+from django.db.models import Count
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, ListView, TemplateView, UpdateView
 
 
 def product_list(request):
@@ -156,3 +161,81 @@ def inventory_replenish_view(request, count):
     else:
         messages.success(request, f'Додано записів: {len(chosen)}.')
     return redirect('inventory_list')
+
+
+# ---------- Ролі та права ----------
+
+class RoleQuerysetMixin:
+    """Уся логіка ролей в одному місці:
+    менеджер (право change_any_product) бачить усе, комірник тільки своє."""
+
+    def get_queryset(self):
+        qs = Product.objects.select_related('category', 'owner')
+        if self.request.user.has_perm('catalog.change_any_product'):
+            return qs
+        return qs.filter(owner=self.request.user)
+
+
+class ProductManageListView(LoginRequiredMixin, RoleQuerysetMixin, ListView):
+    template_name = 'catalog/manage_list.html'
+    context_object_name = 'products'
+
+
+class ProductCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = 'catalog.add_product'
+    raise_exception = True
+    model = Product
+    form_class = ProductForm
+    template_name = 'catalog/product_form.html'
+    success_url = reverse_lazy('manage_list')
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        messages.success(self.request, 'Товар успішно створено!')
+        return super().form_valid(form)
+
+
+class ProductUpdateView(PermissionRequiredMixin, RoleQuerysetMixin, UpdateView):
+    permission_required = 'catalog.change_product'
+    raise_exception = True
+    form_class = ProductForm
+    template_name = 'catalog/product_form.html'
+    success_url = reverse_lazy('manage_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Товар успішно оновлено!')
+        return super().form_valid(form)
+
+
+@login_required
+@require_POST
+def product_publish_view(request, pk):
+    # перевірка власного права у view
+    if not request.user.has_perm('catalog.can_publish'):
+        raise PermissionDenied
+    product = get_object_or_404(Product, pk=pk)
+    Product.objects.filter(pk=pk).update(
+        is_published=not product.is_published,
+        updated_at=timezone.now(),
+    )
+    messages.success(request, 'Статус публікації змінено.')
+    return redirect('manage_list')
+
+
+class ProductStatsView(PermissionRequiredMixin, TemplateView):
+    permission_required = 'catalog.view_stats'
+    raise_exception = True  # залогінений без права отримає 403, а не редирект на логін
+    template_name = 'catalog/stats.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['total'] = Product.objects.count()
+        ctx['published'] = Product.objects.filter(is_published=True).count()
+        ctx['by_category'] = (
+            Product.objects.values('category__name').annotate(n=Count('id')).order_by('-n')
+        )
+        ctx['by_owner'] = (
+            Product.objects.values('owner__username').annotate(n=Count('id')).order_by('-n')
+        )
+        ctx['low_stock'] = InventoryRecord.objects.filter(quantity__lt=F('min_required')).count()
+        return ctx

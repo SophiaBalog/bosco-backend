@@ -1,5 +1,5 @@
 import uuid as uuid_lib
-
+from django.conf import settings
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MinLengthValidator
@@ -97,8 +97,23 @@ class Product(BaseTrackedModel):
         related_name="products",
     )
 
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="products",
+        verbose_name="Власник",
+    )
+
+    is_published = models.BooleanField(default=False, verbose_name="Опубліковано")
     class Meta:
         unique_together = ("title", "category")
+        permissions = [
+            ("change_any_product", "Може редагувати будь-який товар"),
+            ("can_publish", "Може публікувати товар"),
+            ("view_stats", "Може переглядати звіт"),
+        ]
 
     def clean(self):
         super().clean()

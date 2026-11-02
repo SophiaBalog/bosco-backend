@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Керування товарами{% endblock %}
+
+{% block content %}
+<h2>Керування товарами</h2>
+
+{% if perms.catalog.add_product %}
+    <p><a href="{% url 'manage_add' %}">Додати товар</a></p>
+{% endif %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Назва</th>
+            <th>Категорія</th>
+            <th>Власник</th>
+            <th>Опубліковано</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in products %}
+        <tr>
+            <td>{{ p.title }}</td>
+            <td>{{ p.category.full_path }}</td>
+            <td>{{ p.owner|default:"—" }}</td>
+            <td>{{ p.is_published|yesno:"Так,Ні" }}</td>
+            <td>
+                <a href="{% url 'manage_edit' p.pk %}">Редагувати</a>
+                {% if perms.catalog.can_publish %}
+                <form method="post" action="{% url 'manage_publish' p.pk %}" style="display:inline">
+                    {% csrf_token %}
+                    <button type="submit">{% if p.is_published %}Зняти з публікації{% else %}Опублікувати{% endif %}</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">Товарів немає</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
