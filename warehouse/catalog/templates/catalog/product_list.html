@@ -15,6 +15,7 @@
             <tr>
                 <th>Назва</th>
                 <th>Артикул</th>
+                <th>Категорія</th>
                 <th>Ціна</th>
                 <th>Дії</th>
             </tr>
@@ -24,6 +25,7 @@
             <tr>
                 <td>{{ product.title }}</td>
                 <td>{{ product.article }}</td>
+                <td>{{ product.category.full_path }}</td>
                 <td>{{ product.price }} грн</td>
                 <td>
                     <a href="{% url 'product_edit' product.pk %}" class="btn btn-sm btn-warning">Редагувати</a>

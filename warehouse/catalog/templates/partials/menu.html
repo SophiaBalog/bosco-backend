@@ -2,5 +2,7 @@
 <nav class="main-nav">
     <a href="{% url 'product_list' %}">Список товарів</a> |
     <a href="{% url 'add_product' %}">Додати товар</a> |
+    <a href="{% url 'inventory_list' %}">Інвентар</a> |
+    <a href="{% url 'inventory_alerts' %}">Попередження</a> |
     <span>Всього товарів у базі: <strong>{% product_count %}</strong></span>
 </nav>

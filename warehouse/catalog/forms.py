@@ -9,8 +9,9 @@ from .models import Product
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['title', 'article', 'description', 'price', 'discount_price', 'release_date']
+        fields = ['title', 'article', 'category', 'description', 'price', 'discount_price', 'release_date']
         widgets = {
+            'category': forms.Select(attrs={'class': 'form-control'}),
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'article': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),

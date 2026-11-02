@@ -28,3 +28,18 @@ th {
   margin-bottom: 15px;
   border-radius: 4px;
 }
+
+
+.alert-error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+.alert-warning {
+  background-color: #fff3cd;
+  color: #856404;
+}
+tr.low-stock td {
+  background-color: #ffd6d6;
+  color: #b00020;
+  font-weight: bold;
+}

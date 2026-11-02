@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Інвентар{% endblock %}
+
+{% block content %}
+<h2>Інвентар по складах</h2>
+
+<form method="post" id="replenish-form" action="{% url 'inventory_replenish' 5 %}">
+    {% csrf_token %}
+    <label>Кількість записів:
+        <input type="number" id="replenish-count" value="5" min="1" max="100">
+    </label>
+    <button type="submit">Поповнити випадково</button>
+    <a href="{% url 'inventory_alerts' %}">Попередження про низький запас</a>
+</form>
+<script>
+    // підставляє число з поля у URL: /inventory/replenish/<count>/
+    document.getElementById('replenish-form').addEventListener('submit', function (e) {
+        var n = parseInt(document.getElementById('replenish-count').value, 10) || 1;
+        e.target.action = '/inventory/replenish/' + n + '/';
+    });
+</script>
+
+<table>
+    <thead>
+        <tr>
+            <th>Товар</th>
+            <th>Склад</th>
+            <th>Кількість</th>
+            <th>Мінімальний запас</th>
+            <th>Останнє поповнення</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in records %}
+        <tr>
+            <td>{{ r.product.title }}</td>
+            <td>{{ r.warehouse.title }}</td>
+            <td>{{ r.quantity }}</td>
+            <td>{{ r.min_required }}</td>
+            <td>{{ r.last_restock|date:"d.m.Y H:i:s" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">Записів немає</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
